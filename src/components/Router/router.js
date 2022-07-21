@@ -17,6 +17,10 @@ const routes = [
   },
   {
     path: '/index',
+    redirect: '/index/liste'
+  },
+  {
+    path: '/index',
     name: 'IndexPage',
     component: () => import('@/components/Views/index.vue'),
     children: [
@@ -40,6 +44,7 @@ const routes = [
       },
     ]
   },
+ 
   {
     path: "**",
     name: "PageNotFound",
