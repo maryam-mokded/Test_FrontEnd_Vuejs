@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-// import store from '../store/index';
+import store from '@/store/index';
 
 Vue.use(VueRouter)
 
@@ -23,12 +23,19 @@ const routes = [
     path: '/index',
     name: 'IndexPage',
     component: () => import('@/components/Views/index.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         name: 'DashboardPage',
         path: 'dashboard',
         component: () => import('@/components/Views/Dashboard/dashboard.vue'),
-
+        beforeEnter: (to, from, next) => {
+          if (store.getters.isAdmin == true) {
+            next();
+          } else {
+            router.go("-1");
+          }
+        },
       },
       {
         name: 'AccueilPage',
@@ -40,7 +47,13 @@ const routes = [
         name: 'UserListe',
         path: 'liste',
         component: () => import('@/components/Views/Listes/userListe.vue'),
-
+        beforeEnter: (to, from, next) => {
+          if (store.getters.isAdmin == true) {
+            next();
+          } else {
+            router.go("-1");
+          }
+        },
       },
     ]
   },
@@ -60,19 +73,17 @@ const router = new VueRouter({
   routes
 });
 
-
-
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     if (!store.getters.isAuthenticated) {
-//       next({
-//         path: '/login',
-//       });
-//     }
-//     next();   
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.getters.isAuthenticated) {
+      next({
+        path: '/login',
+      });
+    }
+    next();   
+  } else {
+    next();
+  }
+});
 
 export default router

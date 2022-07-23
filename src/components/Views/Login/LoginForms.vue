@@ -1,14 +1,79 @@
 <template>
-  <div>
-    <h1>Forms Login</h1>
-  </div>
+<div>
+      <v-alert
+            text
+            prominent
+            type="error"
+            icon="fas fa-exclamation-triangle"
+            v-if="errors != null">
+            {{ errors }}
+          </v-alert>
+      <v-form>
+          <v-text-field
+            outlined
+            v-model="user.email"
+            label="E-mail *"
+            placeholder="Entrer votre Email"
+            append-icon="email"
+            type="email"
+            color="teal darken-3"
+            solo
+            required
+          />
+          <v-text-field
+             placeholder="Tapez votre mot de passe"
+            outlined
+            v-model="user.password"
+            :counter="30"
+            :type="passwordShow ? 'text' : 'password'"
+            label="Mot de passe *"
+            name="Mot de passe"
+            color="teal darken-3"
+            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="passwordShow = !passwordShow"
+            solo
+            required
+          />
+      </v-form>
+      <small class="red--text"
+        >* indique que les Champs sont obligatoires</small
+      >
+      <div class="text-center mt-3">
+        <v-btn
+          rounded
+          color="teal darken-3"
+          class="white--text"
+          v-on:click="AuthentificationUser()"
+          >
+           Se Connecter</v-btn
+        >
+      </div>
+    </div>
 </template>
-
 <script>
+
+import { mapGetters , mapActions } from "vuex";
 export default {
-}
+  data: () => ({
+    step: 1,
+    passwordShow: false,
+    user:{
+      email: "",
+      password: ""
+    },
+    errors: null,
+  }), 
+   computed: mapGetters(["user","isErrorMessage"]),
+  methods: {
+    ...mapActions(["LoginUser"]),
+    AuthentificationUser() {
+      this.$store.dispatch('Login', this.user).catch(error => {
+       this.errors = error;
+      });
+    },
+  },
+  props: {
+    source: String,
+  },
+};
 </script>
-
-<style scoped>
-
-</style>

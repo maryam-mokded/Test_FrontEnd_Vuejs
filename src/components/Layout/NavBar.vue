@@ -1,16 +1,20 @@
-
 <template>
   <nav id="Nbody">
     <v-app-bar id="navbar" app>
       <v-icon
+      id="MenuIcon"
+        @click.stop="
+          drawer = !drawer;
+          mini = !mini;
+        "
         color="black"
-        class="MenuICon"
-        @click.stop="drawer=!drawer;mini=!mini">mdi-dots-vertical</v-icon>
+        >fas fa-ellipsis-v
+        </v-icon
+      >
       <v-toolbar-title class="text-uppercase">
-       <span class="font-weight" id="color">Nom application</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      
+
       <v-menu
         bottom
         left
@@ -24,7 +28,7 @@
               <template v-slot:badge>
                 <span>4</span>
               </template>
-              <v-icon color="black">mdi-bell</v-icon>
+                 <v-icon>fas fa-envelope</v-icon>
             </v-badge>
           </v-btn>
         </template>
@@ -81,12 +85,10 @@
         <template v-slot:activator="{ on }">
           <v-btn text v-on="on" class="BtnAvatar">
             <v-icon left id="color">expand_more</v-icon>
-              <v-toolbar-title class="text-uppercase">
-            <span id="color">            
-                Mokded Maryam
-            </span> &nbsp;&nbsp;
-              </v-toolbar-title>
-            <v-avatar size="40" color="teal" class="white--text"> MM </v-avatar>
+            <v-toolbar-title class="text-uppercase">
+              <span id="color" v-if="user"> {{ user.name }} </span> &nbsp;&nbsp;
+            </v-toolbar-title>
+            <v-avatar size="40" color="teal" class="white--text" v-if="user"> {{ user.name[0] }} </v-avatar>
           </v-btn>
         </template>
         <v-list>
@@ -94,7 +96,8 @@
             multiple
             color="indigo"
             flat
-            style="font-family: times New Roman !important">
+            style="font-family: times New Roman !important"
+          >
             <router-link active-link="active">
               <v-list-item active-class="border">
                 <v-list-item-title>
@@ -103,13 +106,13 @@
                 </v-list-item-title>
               </v-list-item>
             </router-link>
-            
-            <router-link active-link="active" to="" >
-              <v-list-item active-class="border"  @click="LogoutUser()">
+
+            <router-link active-link="active" to="">
+              <v-list-item active-class="border" @click="LogoutUser()">
                 <v-list-item-title>
                   <v-icon color="black" right>exit_to_app</v-icon> Déconnexion
                 </v-list-item-title>
-              </v-list-item>
+              </v-list-item>     
             </router-link>
           </v-list-item-group>
         </v-list>
@@ -117,18 +120,20 @@
     </v-app-bar>
 
     <v-navigation-drawer
+    id="sidebar"
       v-model="drawer"
       :mini-variant.sync="mini"
       permanent
       app
       color="#ffffff"
-    >
-      <v-list-item class="px-1" >
-        <v-list-item-avatar color="#000000" size="50">
-           <img src="../../assets/PhotoProfil.png" />
-         </v-list-item-avatar>
+    > 
+      <v-list-item class="px-1">
+
+        <v-list-item-avatar color="#000000" size="40">
+          <img src="../../assets/PhotoProfil.png" />
+        </v-list-item-avatar>
         <v-list-item-title>
-          <span>Mokded Maryam</span>
+          <span>{{ user.name }}</span>
         </v-list-item-title>
       </v-list-item>
       <hr />
@@ -138,10 +143,10 @@
 </template>
 
 <script>
+import { mapGetters , mapActions } from "vuex";
 export default {
   components: {
     SideBar: () => import("./SideBar"),
-  
   },
   props: {
     value: {
@@ -155,43 +160,45 @@ export default {
     selected: [2],
     items: [],
   }),
- 
+
+  computed: mapGetters(["user","isAuthenticated","isAdmin","isUser"]),
   methods: {
-   
-    GetAllNotificationsMessage(){
-      this.items = [
-          {
-            action: "15 min",
-            headline: "benjemaahanin@gmail.com",
-            subtitle: `Je n'arrive pas à accéder à la plateforme`,
-            title: "Hanin Ben Jemaà",
-          },
-          {
-            action: "2 hr",
-            headline: "smiri@gmail.com",
-            subtitle: `Quand devrions-nous lancer un nouvel événement`,
-            title: "Wissem Smiri",
-          },
-          {
-            action: "6 hr",
-            headline: "hedhli@yahoo.fr",
-            subtitle: "Où je peut trouver le rapport de réunion?",
-            title: "Houssem Hedhli",
-          },
-          {
-            action: "12 hr",
-            headline: "Maryem mokded ",
-            subtitle: "Nouvelle inscription ajoutée",
-            title: "mariem.mokded@gmail.com",
-          },
-        ]
-    },
+    ...mapActions([
+       "Logout",
+    ]),
     LogoutUser(){
-      console.log("Logout");
+      this.Logout();
+    },
+    GetAllNotificationsMessage() {
+      this.items = [
+        {
+          action: "15 min",
+          headline: "benjemaahanin@gmail.com",
+          subtitle: `Je n'arrive pas à accéder à la plateforme`,
+          title: "Hanin Ben Jemaà",
+        },
+        {
+          action: "2 hr",
+          headline: "smiri@gmail.com",
+          subtitle: `Quand devrions-nous lancer un nouvel événement`,
+          title: "Wissem Smiri",
+        },
+        {
+          action: "6 hr",
+          headline: "hedhli@yahoo.fr",
+          subtitle: "Où je peut trouver le rapport de réunion?",
+          title: "Houssem Hedhli",
+        },
+        {
+          action: "12 hr",
+          headline: "Maryem mokded ",
+          subtitle: "Nouvelle inscription ajoutée",
+          title: "mariem.mokded@gmail.com",
+        },
+      ];
     },
   },
-  created() {
-   },
+  created() {},
 };
 </script>
 
@@ -202,23 +209,6 @@ export default {
 
 #color {
   color: black;
-}
-
-#colorSideBarModeDark {
-  color: white;
-}
-#colorSideBarModeLight {
-  color: black;
-}
-
-#drawerModeDark {
-  background-color: #283046 !important;
-  box-shadow: 7px 4px 21px #ccc !important;
-}
-
-#drawerModeLight {
-  background-color: #ffffff !important;
-  box-shadow: 7px 4px 21px #ccc !important;
 }
 
 .nameSB {
@@ -236,17 +226,13 @@ a {
   text-decoration: none;
 }
 
-#icon {
-  color: white;
-  left: 15px;
-}
 #smallText {
   margin-left: 89px;
   font-size: 12px;
   color: gray;
 }
 #Nbody {
-  background-color: #eeeeee;
+  background-color: #f7f7f7;
   font-family: times New Roman;
 }
 
@@ -262,6 +248,9 @@ a {
 .v-icon.v-icon.v-icon--link {
   padding: 6px !important;
   margin-right: 10px;
+}
+#MenuIcon{
+  border-radius: 50%;
 }
 
 #nbNotification {
@@ -297,32 +286,13 @@ a {
   margin-left: 15px;
   margin-right: 15px;
 }
-.menuable__content__active{
+
+#sidebar {
+  border: 1px solid #333;
+  box-shadow: 6px 0 16px -2px #e4e4e4;
+}
+.menuable__content__active {
   top: 80px !important;
-}
-
-
-
-/* width */
-::-webkit-scrollbar {
-  width: 20px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey; 
-  border-radius: 10px;
-}
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: red; 
-  border-radius: 10px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #b30000; 
 }
 
 </style>

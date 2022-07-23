@@ -1,6 +1,14 @@
 <template>
   <div>
-    <h1>Page Home</h1>
+    <v-alert
+      outlined
+      type="info"
+      class="mt-12 mr-5"
+      prominent
+      border="left"
+    >
+      Bienvenue sur notre plateforme.
+    </v-alert>
   </div>
 </template>
 
